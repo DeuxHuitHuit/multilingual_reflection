@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension id="multilingual_reflection" xmlns="http://symphony-cms.com/schemas/extension/1.0">
+	<name>Multilingual Reflection</name>
+	<description>Multilingual version of Reflection field.</description>
+	<types>
+		<type>Field Types</type>
+	</types>
+	<authors>
+		<author>
+			<name github="vlad-ghita" symphony="vladg">Vlad Ghita</name>
+		</author>
+	</authors>
+	<releases>
+		<release version="1.0" date="2013-10-07" min="2.2">
+			- First release.
+		</release>
+	</releases>
+</extension>
