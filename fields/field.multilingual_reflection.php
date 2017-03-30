@@ -269,6 +269,78 @@
 
 			return parent::prepareTableValue( $data, $link );
 		}
+		
+		protected function getLang($data = null) {
+			// $required_languages = $this->getRequiredLanguages();
+			$lc = Lang::get();
+
+			if (!FLang::validateLangCode($lc)) {
+				$lc = FLang::getLangCode();
+			}
+
+			// If value is empty for this language, load value from main language
+			if (is_array($data) && $this->get('default_main_lang') == 'yes' && empty($data["value-$lc"])) {
+				$lc = FLang::getMainLang();
+			}
+
+			// If value if still empty try to use the value from the first
+			// required language
+			// if (is_array($data) && empty($data["value-$lc"]) && count($required_languages) > 0) {
+			// 	$lc = $required_languages[0];
+			// }
+
+			return $lc;
+		}
+
+		public function prepareExportValue($data, $mode, $entry_id = null) {
+			$modes = (object)$this->getExportModes();
+			$lc = $this->getLang();
+
+			// Export handles:
+			if ($mode === $modes->getHandle) {
+				if (isset($data["handle-$lc"])) {
+					return $data["handle-$lc"];
+				}
+				else if (isset($data['handle'])) {
+					return $data['handle'];
+				}
+				else if (isset($data["value-$lc"])) {
+					return General::createHandle($data["value-$lc"]);
+				}
+				else if (isset($data['value'])) {
+					return General::createHandle($data['value']);
+				}
+			}
+
+			// Export unformatted:
+			else if ($mode === $modes->getValue || $mode === $modes->getPostdata) {
+				if (isset($data["value-$lc"])) {
+					return $data["value-$lc"];
+				}
+				return isset($data['value'])
+					? $data['value']
+					: null;
+			}
+
+			// Export formatted:
+			else if ($mode === $modes->getFormatted) {
+				if (isset($data["value_formatted-$lc"])) {
+					return $data["value_formatted-$lc"];
+				}
+				if (isset($data['value_formatted'])) {
+					return $data['value_formatted'];
+				}
+				else if (isset($data["value-$lc"])) {
+					return General::sanitize($data["value-$lc"]);
+				}
+				else if (isset($data['value'])) {
+					return General::sanitize($data['value']);
+				}
+			}
+
+			return null;
+		}
+
 
 		/*-------------------------------------------------------------------------
 			Compile:
